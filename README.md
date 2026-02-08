@@ -30,7 +30,7 @@
 ### 1. 克隆仓库
 
 ```bash
-git clone https://github.com/<your-username>/proxy-server-setup.git
+git clone https://github.com/ZhaoYangGG/proxy-server-setup.git
 cd proxy-server-setup
 ```
 
