@@ -1,123 +1,107 @@
-# 🚀 Proxy Server Setup
+# 🚀 Proxy Server Setup Skill
 
-> 一键在 Linux 服务器上部署 [mihomo (Clash.Meta)](https://github.com/MetaCubeX/mihomo) 代理服务，支持订阅管理、WebUI 控制面板和自动化测试。
+> 供 AI 编程 Agent（[OpenCode](https://github.com/opencode-ai/opencode)、[Claude Code](https://docs.anthropic.com/en/docs/claude-code) 等）使用的 **Skill 文件**，让 Agent 能够在 Linux 服务器上自动部署 [mihomo (Clash.Meta)](https://github.com/MetaCubeX/mihomo) 代理服务。
 
-## ✨ 功能特性
+## 什么是 Skill？
 
-- **一键部署** — 自动下载 mihomo、配置系统服务、开放防火墙端口
-- **多 WebUI 支持** — Yacd / Clara / MetaUI 任选
-- **订阅管理** — 自动拉取 Clash 订阅并定时更新
-- **TUN 模式** — 支持全局透明代理
-- **自动测试** — 部署后自动验证 SOCKS5 / HTTP / API 连通性
-- **安全加固** — 支持 WebUI 认证、端口检测、服务隔离建议
-- **完善的错误处理** — 前置环境检查、下载校验、端口冲突检测
+Skill 是一种结构化的指令文档，AI 编程 Agent 通过读取 Skill 来了解**如何完成一项特定任务**。它包含：
 
-## 📋 前置要求
+- **Input Parameters** — Agent 需要从用户获取的参数（如订阅链接、端口号）
+- **Installation Script** — Agent 需要在目标服务器上执行的步骤和脚本
+- **Testing Script** — 部署后的自动化验证脚本
+- **Output** — Agent 应返回给用户的结果结构
+- **Error Handling** — Agent 遇到错误时的处理策略
 
-| 依赖 | 说明 |
+Agent 读取 Skill 后，会根据用户的实际输入参数，自动执行部署、测试并返回结果，**无需用户手动操作**。
+
+## 📋 Skill 概览
+
+| 属性 | 值 |
 |------|------|
-| **OS** | Ubuntu 20.04+ / Debian 10+ / CentOS 7+ |
-| **权限** | root 用户 |
-| curl / wget | 下载工具 |
-| git | 克隆 WebUI |
-| gunzip | 解压 mihomo |
-| python3 | 测试脚本 |
-| systemctl | 服务管理 |
-| ufw / firewalld | 防火墙 (可选) |
+| **名称** | `proxy-server-setup` |
+| **用途** | 在 Linux 服务器上部署 mihomo 代理 |
+| **支持 Agent** | OpenCode / Claude Code / 其他支持 Skills 的 Agent |
+| **目标系统** | Ubuntu 20.04+ / Debian 10+ / CentOS 7+ |
 
-## 🚀 快速开始
+### 功能覆盖
 
-### 1. 克隆仓库
+- 自动下载安装 mihomo（自动检测 x86_64 / arm64）
+- 多 WebUI 支持（Yacd / Clara / MetaUI）
+- Clash 订阅拉取与配置生成
+- TUN 模式 / DNS 分流规则
+- Systemd 服务配置（开机自启 + 故障重启）
+- 防火墙自动配置（ufw / firewalld）
+- 部署后 SOCKS5 / HTTP / API / 节点自动测试
+- GeoIP / GeoSite 规则库下载
+- 日志轮转配置
 
-```bash
-git clone https://github.com/ZhaoYangGG/proxy-server-setup.git
-cd proxy-server-setup
-```
+## 🚀 如何使用
 
-### 2. 参考文档部署
+### 1. 将 Skill 添加到你的 Agent
 
-完整的部署流程和脚本在 [proxy-server-setup.md](proxy-server-setup.md) 中，包含：
+**OpenCode**：将 `proxy-server-setup.md` 放入项目的 Skills 目录（参考 OpenCode 文档配置 Skills 路径）。
 
-1. **环境前置检查** — 依赖工具、系统架构、端口可用性
-2. **下载安装 mihomo** — 自动检测架构，获取最新版本
-3. **安装 WebUI & GeoData** — WebUI 面板 + GeoIP/GeoSite 规则库
-4. **生成配置文件** — 代理端口、DNS、分流规则、订阅源
-5. **Systemd 服务** — 开机自启、故障自动重启
-6. **防火墙配置** — 自动检测 ufw/firewalld
-7. **代理测试** — SOCKS5 / HTTP / API / 节点检查
+**Claude Code**：在对话中引用该文件，或将其放入 Agent 可读取的工作目录中。
 
-### 3. 最小化部署示例
+**其他 Agent**：任何支持读取 Markdown 结构化指令的 Agent 均可使用。
 
-```bash
-# 设置变量
-export SUBSCRIPTION_URL="https://your-provider.com/api/v1/client/subscribe?token=xxx"
+### 2. 给 Agent 下达任务
 
-# 按照 proxy-server-setup.md 中的步骤依次执行
-# Step 0: 前置检查
-# Step 1: 下载 mihomo
-# Step 2: 安装 WebUI & GeoData
-# Step 3: 生成配置 (替换变量)
-# Step 4: 创建 Systemd 服务
-# Step 5: 配置防火墙
-# Step 6: 启动服务
-systemctl start mihomo
-```
-
-## 🔧 常用配置
-
-| 参数 | 默认值 | 说明 |
-|------|--------|------|
-| `EXTERNAL_PORT` | 7890 | 代理端口 (HTTP/SOCKS5) |
-| `WEBUI_PORT` | 9090 | WebUI 控制面板端口 |
-| `DNS_PORT` | 1053 | DNS 服务端口 |
-| `WEBUI_TYPE` | yacd | WebUI 类型 (yacd/clara/metaui) |
-| `ENABLE_TUN` | true | 是否启用 TUN 模式 |
-| `ENABLE_AUTH` | false | 是否启用 WebUI 认证 |
-
-## 📁 文件结构
-
-部署后服务器上的文件布局：
+只需用自然语言告诉 Agent 你要做什么，Agent 会自动读取 Skill 并执行：
 
 ```
-/usr/local/bin/mihomo          # mihomo 二进制文件
-/etc/clash/
-├── config.yaml                # 主配置文件
-├── GeoIP.dat                  # GeoIP 规则库
-├── GeoSite.dat                # GeoSite 规则库
-├── providers/                 # 订阅配置
-│   └── mysub.yaml
-└── webui/                     # WebUI 面板
-/etc/systemd/system/mihomo.service  # 系统服务
-/var/log/clash/                # 日志目录
-├── access.log
-└── error.log
+帮我在服务器上部署代理，订阅链接是 https://example.com/api/v1/client/subscribe?token=xxx
 ```
 
-## 🛠️ 维护命令
+Agent 会自动：
+1. 读取 Skill 中的 Input Parameters，提取你提供的 `subscription_url`
+2. 按 Installation Script 的步骤依次执行（前置检查 → 安装 → 配置 → 启动）
+3. 运行 Testing Script 验证部署结果
+4. 按 Output 格式返回部署状态和访问地址
 
-```bash
-# 查看服务状态
-systemctl status mihomo
+### 3. 可选参数
 
-# 重启服务
-systemctl restart mihomo
+你也可以指定更多参数，Agent 会自动识别并应用：
 
-# 实时查看日志
-journalctl -u mihomo -f
-
-# 更新订阅
-curl -X POST http://127.0.0.1:9090/providers/MySubscription/refresh
-
-# 查看节点列表
-curl http://127.0.0.1:9090/proxies
+```
+部署代理，订阅链接 https://example.com/link，端口改成 8080，WebUI 用 clara，开启认证，密码 my_secret
 ```
 
-## ⚠️ 安全建议
+完整参数列表见 [proxy-server-setup.md](proxy-server-setup.md#input-parameters)。
 
-1. 生产环境将 `external-controller` 绑定 `127.0.0.1`，通过 SSH 隧道远程管理
-2. 务必设置 `secret` 字段保护 WebUI API
-3. 非 TUN 模式下建议使用专用用户运行服务，而非 root
-4. 定期更新 GeoIP/GeoSite 数据库确保分流规则准确
+## 📁 仓库结构
+
+```
+├── proxy-server-setup.md   # Skill 文件 (Agent 读取此文件)
+├── README.md               # 本说明文档 (面向人类)
+├── LICENSE                  # MIT 许可证
+└── .gitignore
+```
+
+## 📖 Skill 文件结构说明
+
+[proxy-server-setup.md](proxy-server-setup.md) 内部结构：
+
+| 章节 | 说明 |
+|------|------|
+| Skill Metadata | 名称、版本、标签等元信息 |
+| Input Parameters | Agent 需收集的参数定义（类型、默认值、是否必需） |
+| Installation Script (Step 0-6) | 分步部署脚本，含前置检查、安装、配置、防火墙 |
+| Testing Script | 部署后自动验证脚本 |
+| Usage Examples | Agent 调用示例 |
+| Output | Agent 返回结果的 JSON 结构定义 |
+| Error Handling | 错误码与对应处理方案 |
+| Dependencies | 目标服务器需要的依赖 |
+| File Locations | 部署后的文件路径映射 |
+| Maintenance Commands | 日常运维命令参考 |
+| Log Rotation | 日志轮转配置 |
+
+## ⚠️ 注意事项
+
+1. **Skill 不是直接执行的脚本** — 它是 Agent 的指令文档，由 Agent 解析后在目标服务器上执行
+2. **需要 root 权限** — Agent 需要以 root 身份连接目标服务器
+3. **订阅链接敏感** — 不要将真实订阅链接提交到公开仓库
+4. **安全加固** — Skill 中包含安全建议（绑定 127.0.0.1、设置 secret），Agent 会参考但请自行确认
 
 ## 📄 License
 
@@ -125,4 +109,4 @@ curl http://127.0.0.1:9090/proxies
 
 ## 🤝 Contributing
 
-欢迎提交 Issue 和 Pull Request！
+欢迎提交 Issue 和 Pull Request！如果你有其他部署场景的 Skill，也欢迎贡献。
