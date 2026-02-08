@@ -37,15 +37,28 @@ Agent 读取 Skill 后，会根据用户的实际输入参数，自动执行部�
 
 ## 🚀 如何使用
 
-### 1. 将 Skill 添加到你的 Agent
+### 方式一：直接给 Agent 仓库链接（最简单）
+
+无需下载任何文件，直接把仓库链接丢给 Agent，让它自己读取学习：
+
+```
+请阅读这个 Skill 并帮我部署代理：https://github.com/ZhaoYangGG/proxy-server-setup
+订阅链接是 https://example.com/api/v1/client/subscribe?token=xxx
+```
+
+Agent 会自动访问仓库、读取 `proxy-server-setup.md`、理解部署流程，然后在你的服务器上执行。
+
+### 方式二：将 Skill 文件放入 Agent 工作目录
+
+如果你需要离线使用或自定义 Skill 内容：
 
 **OpenCode**：将 `proxy-server-setup.md` 放入项目的 Skills 目录（参考 OpenCode 文档配置 Skills 路径）。
 
-**Claude Code**：在对话中引用该文件，或将其放入 Agent 可读取的工作目录中。
+**Claude Code**：将文件放入 Agent 可读取的工作目录中。
 
 **其他 Agent**：任何支持读取 Markdown 结构化指令的 Agent 均可使用。
 
-### 2. 给 Agent 下达任务
+### 给 Agent 下达任务
 
 只需用自然语言告诉 Agent 你要做什么，Agent 会自动读取 Skill 并执行：
 
