@@ -1,0 +1,16 @@
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Secrets - never commit subscription URLs or passwords
+.env
+secrets.yaml
